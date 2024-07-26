@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import {
   Bell,
@@ -19,12 +20,16 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import React from "react";
 import { ClerkLoaded, ClerkLoading, UserButton } from "@clerk/nextjs";
+import { ModeToggle } from "../mode-toggle";
+import { useTheme } from "next-themes";
+import { dark } from "@clerk/themes";
 
 type MainLayoutProps = {
   children: React.ReactNode;
 };
 
 export function MainLayout({ children }: MainLayoutProps) {
+  const { resolvedTheme } = useTheme();
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -35,7 +40,9 @@ export function MainLayout({ children }: MainLayoutProps) {
               className="flex items-center gap-2 font-semibold"
             >
               <CodeSquareIcon className="h-6 w-6" />
-              <span className="">Acme Inc</span>
+              <span className="bg-gradient-to-r from-blue-500 to-violet-600 bg-clip-text text-transparent">
+                CodeSnipShare
+              </span>
             </Link>
             <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
               <Bell className="h-4 w-4" />
@@ -106,7 +113,9 @@ export function MainLayout({ children }: MainLayoutProps) {
                   className="flex items-center gap-2 text-lg font-semibold"
                 >
                   <CodeSquareIcon className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
+                  <span className="sr-only bg-gradient-to-r from-blue-500 to-violet-600 bg-clip-text text-transparent">
+                    CodeSnipShare
+                  </span>
                 </Link>
                 <Link
                   href="#"
@@ -161,8 +170,15 @@ export function MainLayout({ children }: MainLayoutProps) {
               </div>
             </form>
           </div>
+          <ModeToggle />
           <ClerkLoaded>
-            <UserButton afterSignOutUrl="/" />
+            <UserButton
+              afterSignOutUrl="/"
+              appearance={{
+                // @ts-ignore
+                baseTheme: resolvedTheme === "dark" && dark,
+              }}
+            />
           </ClerkLoaded>
           <ClerkLoading>
             <Loader2 className="size-6 animate-spin " />

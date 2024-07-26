@@ -1,10 +1,14 @@
 "use client";
 import { ClerkLoaded, ClerkLoading, SignIn } from "@clerk/nextjs";
-import { Loader2, Wallet } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Lottie from "react-lottie";
 import programming1 from "@/public/animation-data/programming1.json";
+import { dark } from "@clerk/themes";
+import { useTheme } from "next-themes";
 
 export default function Page() {
+  const { resolvedTheme } = useTheme();
+
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
       <div className="h-full lg:flex flex-col items-center justify-center px-4">
@@ -25,7 +29,12 @@ export default function Page() {
             <Loader2 className="animate-spin w-[40px] h-[40px]" />
           </ClerkLoading>
           <ClerkLoaded>
-            <SignIn />
+            <SignIn
+              appearance={{
+                // @ts-ignore
+                baseTheme: resolvedTheme === "dark" && dark,
+              }}
+            />
           </ClerkLoaded>
         </div>
       </div>
