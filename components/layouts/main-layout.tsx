@@ -1,6 +1,13 @@
 "use client";
 import Link from "next/link";
-import { Bell, CodeSquareIcon, Loader2, Menu, Search } from "lucide-react";
+import {
+  Bell,
+  CodeSquareIcon,
+  Loader2,
+  Menu,
+  PlusCircle,
+  Search,
+} from "lucide-react";
 
 import { FaCode, FaHeart, FaTrash } from "react-icons/fa6";
 
@@ -15,6 +22,7 @@ import { useTheme } from "next-themes";
 import { dark } from "@clerk/themes";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useNewNote } from "@/features/notes/hooks/use-new-note";
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -41,6 +49,8 @@ const NAVIGATION_LINKS = [
 export function MainLayout({ children }: MainLayoutProps) {
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
+  const { onOpen } = useNewNote();
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -125,12 +135,21 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search products..."
+                  placeholder="Search..."
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                 />
               </div>
             </form>
           </div>
+          <Button
+            variant={"outline"}
+            size={"sm"}
+            className="flex items-center gap-2"
+            onClick={() => onOpen()}
+          >
+            <PlusCircle className="size-5" />
+            <span className="sr-only">Snippet</span>
+          </Button>
           <ModeToggle />
           <ClerkLoaded>
             <UserButton
