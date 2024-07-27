@@ -1,0 +1,157 @@
+import { config } from "dotenv";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import { topics } from "@/db/schema";
+import { createId } from "@paralleldrive/cuid2"
+
+config({ path: ".env.local" });
+
+const sql = neon(process.env.DB_URL!);
+const db = drizzle(sql);
+
+const TOPICS = [
+    "JavaScript",
+    "Python",
+    "Java",
+    "C++",
+    "C#",
+    "PHP",
+    "Ruby",
+    "Go",
+    "Rust",
+    "Swift",
+    "Kotlin",
+    "TypeScript",
+    "HTML",
+    "CSS",
+    "SQL",
+    "R",
+    "MATLAB",
+    "Scala",
+    "Perl",
+    "Dart",
+    "Lua",
+    "Shell",
+    "Haskell",
+    "Objective-C",
+    "Web",
+    "Frontend",
+    "Backend",
+    "Fullstack",
+    "Node.js",
+    "React",
+    "Angular",
+    "Vue.js",
+    "Svelte",
+    "Express",
+    "Django",
+    "Flask",
+    "Ruby on Rails",
+    "ASP.NET",
+    "Spring",
+    "Laravel",
+    "Bootstrap",
+    "TailwindCSS",
+    "REST API",
+    "GraphQL",
+    "Android",
+    "iOS",
+    "React Native",
+    "Flutter",
+    "Xamarin",
+    "SwiftUI",
+    "Data Science",
+    "Machine Learning",
+    "Deep Learning",
+    "Artificial Intelligence",
+    "Neural Networks",
+    "TensorFlow",
+    "PyTorch",
+    "Scikit-Learn",
+    "Pandas",
+    "NumPy",
+    "Matplotlib",
+    "Data Visualization",
+    "NLP",
+    "Computer Vision",
+    "DevOps",
+    "Docker",
+    "Kubernetes",
+    "CI/CD",
+    "Jenkins",
+    "GitLab",
+    "Travis CI",
+    "Ansible",
+    "Terraform",
+    "AWS",
+    "Azure",
+    "Google Cloud",
+    "Serverless",
+    "Infrastructure as Code",
+    "Monitoring",
+    "Game Development",
+    "Unity",
+    "Unreal Engine",
+    "Godot",
+    "Game Design",
+    "2D Games",
+    "3D Games",
+    "Cybersecurity",
+    "Encryption",
+    "Penetration Testing",
+    "Ethical Hacking",
+    "Cryptography",
+    "Blockchain",
+    "Cryptocurrency",
+    "IoT",
+    "AR",
+    "VR",
+    "Big Data",
+    "Cloud Computing",
+    "Microservices",
+    "API",
+    "Automation",
+    "Robotics",
+    "Chatbot",
+    "SaaS",
+    "PaaS",
+    "FaaS",
+    "Open Source",
+    "CMS",
+    "E-commerce",
+    "Agile",
+    "Scrum",
+    "Kanban",
+    "TDD",
+    "BDD",
+    "Algorithms",
+    "Data Structures",
+    "Coding Challenges",
+    "Competitive Programming",
+    "Design Patterns",
+    "Software Architecture",
+    "Testing",
+    "Documentation",
+    "Performance Optimization",
+    "Scalability",
+    "Debugging",
+    "Refactoring",
+    "Clean Code"
+]
+
+const main = async () => {
+    try {
+        // Reset database
+        await db.delete(topics).execute();
+        // Seed topic
+        await db.insert(topics).values(TOPICS.map(t => ({
+            id: createId(),
+            name: t
+        }))).execute();
+    } catch (error) {
+        console.error("Error during seed:", error);
+        process.exit(1);
+    }
+};
+
+main();

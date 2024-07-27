@@ -1,19 +1,9 @@
 "use client";
 import Link from "next/link";
-import {
-  Bell,
-  CodeSquareIcon,
-  Home,
-  LineChart,
-  Loader2,
-  Menu,
-  Package,
-  Search,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
+import { Bell, CodeSquareIcon, Loader2, Menu, Search } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
+import { FaCode, FaHeart, FaTrash } from "react-icons/fa6";
+
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
@@ -23,12 +13,33 @@ import { ClerkLoaded, ClerkLoading, UserButton } from "@clerk/nextjs";
 import { ModeToggle } from "../mode-toggle";
 import { useTheme } from "next-themes";
 import { dark } from "@clerk/themes";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 type MainLayoutProps = {
   children: React.ReactNode;
 };
 
+const NAVIGATION_LINKS = [
+  {
+    link: "/dashboard",
+    label: "All snippets",
+    Icon: FaCode,
+  },
+  {
+    link: "/favorites",
+    label: "Favorites",
+    Icon: FaHeart,
+  },
+  {
+    link: "/trash",
+    label: "Trash",
+    Icon: FaTrash,
+  },
+];
+
 export function MainLayout({ children }: MainLayoutProps) {
+  const pathname = usePathname();
   const { resolvedTheme } = useTheme();
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -51,44 +62,19 @@ export function MainLayout({ children }: MainLayoutProps) {
           </div>
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Home className="h-4 w-4" />
-                Dashboard
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                Orders
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  6
-                </Badge>
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
-              >
-                <Package className="h-4 w-4" />
-                Products{" "}
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Users className="h-4 w-4" />
-                Customers
-              </Link>
-              <Link
-                href="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <LineChart className="h-4 w-4" />
-                Analytics
-              </Link>
+              {NAVIGATION_LINKS.map(({ link, label, Icon }) => (
+                <Link
+                  key={label}
+                  href={link}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                    pathname === link && "text-primary"
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  {label}
+                </Link>
+              ))}
             </nav>
           </div>
         </div>
@@ -109,52 +95,27 @@ export function MainLayout({ children }: MainLayoutProps) {
             <SheetContent side="left" className="flex flex-col">
               <nav className="grid gap-2 text-lg font-medium">
                 <Link
-                  href="#"
+                  href="/dashboard"
                   className="flex items-center gap-2 text-lg font-semibold"
                 >
-                  <CodeSquareIcon className="h-6 w-6" />
+                  <CodeSquareIcon className="h-6 w-6 " />
                   <span className="sr-only bg-gradient-to-r from-blue-500 to-violet-600 bg-clip-text text-transparent">
                     CodeSnipShare
                   </span>
                 </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Home className="h-5 w-5" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  Orders
-                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    6
-                  </Badge>
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Package className="h-5 w-5" />
-                  Products
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Users className="h-5 w-5" />
-                  Customers
-                </Link>
-                <Link
-                  href="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <LineChart className="h-5 w-5" />
-                  Analytics
-                </Link>
+                {NAVIGATION_LINKS.map(({ link, label, Icon }) => (
+                  <Link
+                    key={label}
+                    href={link}
+                    className={cn(
+                      "mx-[-0.65rem] text-sm flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
+                      pathname === link && "text-foreground"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </Link>
+                ))}
               </nav>
             </SheetContent>
           </Sheet>
