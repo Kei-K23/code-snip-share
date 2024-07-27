@@ -25,13 +25,11 @@ export default function NoteCreateSheet() {
   const mutation = useCreateNote();
 
   const onSubmit = (values: FormValues) => {
-    console.log(values);
-
-    // mutation.mutate(values, {
-    //   onSuccess: () => {
-    //     onClose();
-    //   },
-    // });
+    mutation.mutate(values, {
+      onSuccess: () => {
+        onClose();
+      },
+    });
   };
 
   return (
