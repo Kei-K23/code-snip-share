@@ -13,55 +13,35 @@ import { Input } from "@/components/ui/input";
 import { Trash } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/mode-jsx";
-const languages = [
-  "javascript",
-  "java",
-  "python",
-  "xml",
-  "ruby",
-  "sass",
-  "markdown",
-  "mysql",
-  "json",
-  "html",
-  "handlebars",
-  "golang",
-  "csharp",
-  "elixir",
-  "typescript",
-  "css",
-];
 
-const themes = [
-  "monokai",
-  "github",
-  "tomorrow",
-  "kuroir",
-  "twilight",
-  "xcode",
-  "textmate",
-  "solarized_dark",
-  "solarized_light",
-  "terminal",
-];
-
-languages.forEach((lang) => {
+LANGUAGES.forEach((lang) => {
   require(`ace-builds/src-noconflict/mode-${lang}`);
   require(`ace-builds/src-noconflict/snippets/${lang}`);
 });
 
-themes.forEach((theme) => require(`ace-builds/src-noconflict/theme-${theme}`));
+THEMES.forEach((theme) => require(`ace-builds/src-noconflict/theme-${theme}`));
 /*eslint-disable no-alert, no-console */
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import "ace-builds/src-min-noconflict/ext-language_tools";
+import { LANGUAGES, THEMES } from "@/constants";
+import { useState } from "react";
 
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   description: z.string().min(2),
   code: z.string().min(2),
+  language: z.string().min(2),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -81,6 +61,8 @@ export default function NoteCreateForm({
   onDelete,
   disabled,
 }: AccountCreateFormProps) {
+  const [language, setLanguage] = useState<string>("");
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -135,14 +117,50 @@ export default function NoteCreateForm({
         />
         <FormField
           control={form.control}
+          name="language"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Language</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={(e) => {
+                    field.onChange(e);
+                    setLanguage(e);
+                  }}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a language" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {LANGUAGES.map((l) => (
+                      <SelectItem key={l} value={l}>
+                        {l}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="code"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Snippet</FormLabel>
               <FormControl>
                 <AceEditor
-                  placeholder="Placeholder Text"
-                  mode="javascript"
+                  className="w-full"
+                  style={{
+                    width: "100%",
+                    height: "300px",
+                  }}
+                  placeholder="Share your code"
+                  mode={language ?? ""}
                   theme="monokai"
                   name="blah2"
                   onChange={field.onChange}
@@ -164,19 +182,18 @@ export default function NoteCreateForm({
           )}
         />
         <div className="flex flex-col sm:flex-row  gap-4">
-          <Button disabled={disabled} type="submit" className="w-full">
-            {id ? "Save changes" : "Create snippet"}
+          <Button disabled={disabled} type="submit">
+            {id ? "Save changes" : "Create"}
           </Button>
           {!!id && (
             <Button
               disabled={disabled}
               type="button"
-              className="w-full"
               variant={"outline"}
               onClick={handleDelete}
             >
               <Trash className="size-4 mr-2" />
-              <span>Delete account</span>
+              <span>Delete</span>
             </Button>
           )}
         </div>

@@ -14,6 +14,7 @@ export const notes = pgTable("notes", {
     description: text("description").notNull(),
     code: text("code").notNull(),
     userId: text('userId').notNull(),
+    language: text('language').notNull(),
     isPreDeleted: boolean("is_pre_deleted").default(false)
 });
 

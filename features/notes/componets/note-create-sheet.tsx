@@ -25,11 +25,13 @@ export default function NoteCreateSheet() {
   const mutation = useCreateNote();
 
   const onSubmit = (values: FormValues) => {
-    mutation.mutate(values, {
-      onSuccess: () => {
-        onClose();
-      },
-    });
+    console.log(values);
+
+    // mutation.mutate(values, {
+    //   onSuccess: () => {
+    //     onClose();
+    //   },
+    // });
   };
 
   return (
@@ -43,7 +45,12 @@ export default function NoteCreateSheet() {
         </SheetHeader>
         <NoteCreateForm
           onSubmit={onSubmit}
-          defaultValue={{ title: "", description: "", code: "" }}
+          defaultValue={{
+            title: "",
+            description: "",
+            code: "",
+            language: "",
+          }}
           disabled={mutation.isPending}
         />
       </SheetContent>
