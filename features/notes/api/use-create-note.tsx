@@ -17,6 +17,7 @@ export const useCreateNote = () => {
     onSuccess: () => {
       toast.success("Snippet created successfully");
       // Revalidate the fetch functions
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
     onError: () => {
       toast.error("Could not create the snippet");

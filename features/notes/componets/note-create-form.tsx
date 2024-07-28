@@ -21,26 +21,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import AceEditor from "react-ace";
-
-import "ace-builds/src-noconflict/mode-jsx";
-
-LANGUAGES.forEach((lang) => {
-  require(`ace-builds/src-noconflict/mode-${lang}`);
-  require(`ace-builds/src-noconflict/snippets/${lang}`);
-});
-
-THEMES.forEach((theme) => require(`ace-builds/src-noconflict/theme-${theme}`));
-/*eslint-disable no-alert, no-console */
-import "ace-builds/src-min-noconflict/ext-searchbox";
-import "ace-builds/src-min-noconflict/ext-language_tools";
-import { LANGUAGES, THEMES } from "@/constants";
 import { useState } from "react";
 import { useGetTopics } from "../api/use-get-topics";
 import MultiSelect from "@/components/multi-select";
 import { toast } from "sonner";
 import { insertNotesWithTopicsSchema } from "@/db/schema";
 import { useTheme } from "next-themes";
+import { LANGUAGES } from "@/constants";
+import CodeEditor from "@/components/code-editor";
 
 type FormValues = z.infer<typeof insertNotesWithTopicsSchema>;
 
@@ -178,29 +166,10 @@ export default function NoteCreateForm({
             <FormItem className="mt-7">
               <FormLabel>Code snippet</FormLabel>
               <FormControl>
-                <AceEditor
-                  className="w-full border"
-                  style={{
-                    width: "100%",
-                    height: "450px",
-                  }}
-                  placeholder="Share your code"
-                  mode={language ?? ""}
-                  theme={resolvedTheme === "dark" ? "monokai" : "tomorrow"}
-                  name="code_snip_share_editor"
+                <CodeEditor
+                  language={language}
                   onChange={field.onChange}
-                  fontSize={14}
-                  lineHeight={19}
-                  showPrintMargin={true}
-                  showGutter={true}
-                  highlightActiveLine={true}
-                  setOptions={{
-                    enableBasicAutocompletion: true,
-                    enableLiveAutocompletion: true,
-                    enableSnippets: true,
-                    showLineNumbers: true,
-                    tabSize: 2,
-                  }}
+                  resolvedTheme={resolvedTheme}
                 />
               </FormControl>
             </FormItem>

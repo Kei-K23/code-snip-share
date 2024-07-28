@@ -5,7 +5,8 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator"
 import { createId } from "@paralleldrive/cuid2"
 import { z } from "zod";
-import { insertNotesWithTopicsSchema, notes, topicsToNotes } from "@/db/schema";
+import { insertNotesWithTopicsSchema, notes, topics, topicsToNotes } from "@/db/schema";
+import { Note, Topic } from "@/types";
 
 const app = new Hono()
     .get("/", clerkMiddleware(), async (c) => {
@@ -17,9 +18,40 @@ const app = new Hono()
             }, 401);
         }
 
-        const data = await db.select().from(notes).orderBy(desc(notes.createdAt));
+        const data = await db.select().from(topicsToNotes)
+            .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
+            .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
+            .orderBy(desc(notes.createdAt));
 
-        return c.json({ data: data }, 200);
+        const uniqueNotesMap: { [key: string]: Note } = {};
+
+        // Iterate through each item in the array
+        data.forEach(item => {
+            if (!item || !item?.notes || !item?.topics || !item?.topics_to_notes) {
+                return;
+            }
+            const noteId = item.notes.id;
+            const topic: Topic = {
+                id: item.topics.id,
+                name: item.topics.name
+            };
+
+            // If the noteId is not in the map, add it with the note and topic
+            if (!uniqueNotesMap[noteId]) {
+                uniqueNotesMap[noteId] = {
+                    ...item.notes,
+                    topics: [topic]
+                };
+            } else {
+                // If the noteId is already in the map, just add the topic to the topics array
+                uniqueNotesMap[noteId].topics.push(topic);
+            }
+        });
+
+        // Convert the map to an array
+        const uniqueNotesArray: Note[] = Object.values(uniqueNotesMap);
+
+        return c.json({ data: uniqueNotesArray }, 200);
     })
     .post("/", clerkMiddleware(), zValidator("json", insertNotesWithTopicsSchema), async (c) => {
         const auth = getAuth(c);
@@ -39,10 +71,10 @@ const app = new Hono()
 
         // Create notes
         const [data] = await db.insert(notes).values({
-            title: values.title,
-            language: values.language,
-            description: values.description,
-            code: values.code,
+            title: values.title.trim(),
+            language: values.language.trim(),
+            description: values.description.trim(),
+            code: values.code.trim(),
             id: createId(),
             userId: auth.userId
         }).returning();
