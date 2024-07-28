@@ -36,15 +36,12 @@ import "ace-builds/src-min-noconflict/ext-searchbox";
 import "ace-builds/src-min-noconflict/ext-language_tools";
 import { LANGUAGES, THEMES } from "@/constants";
 import { useState } from "react";
+import { useGetTopics } from "../api/use-get-topics";
+import MultiSelect from "@/components/multi-select";
+import { toast } from "sonner";
+import { insertNotesWithTopicsSchema } from "@/db/schema";
 
-const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  description: z.string().min(2),
-  code: z.string().min(2),
-  language: z.string().min(2),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof insertNotesWithTopicsSchema>;
 
 type AccountCreateFormProps = {
   id?: string;
@@ -62,14 +59,20 @@ export default function NoteCreateForm({
   disabled,
 }: AccountCreateFormProps) {
   const [language, setLanguage] = useState<string>("");
+  // Fetch topics to use in note creation
+  const { data, isLoading } = useGetTopics();
 
   // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof insertNotesWithTopicsSchema>>({
+    resolver: zodResolver(insertNotesWithTopicsSchema),
     defaultValues: defaultValue,
   });
 
   const handleSubmit = (values: FormValues) => {
+    if (!values.topics.length) {
+      toast.error("Select at least one topic to create snippet");
+      return;
+    }
     onSubmit?.(values);
   };
 
@@ -83,6 +86,26 @@ export default function NoteCreateForm({
         onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 pt-4"
       >
+        <FormField
+          control={form.control}
+          name="topics"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Topics</FormLabel>
+              <FormControl>
+                <MultiSelect
+                  disabled={isLoading}
+                  options={data?.map((d) => ({
+                    label: d.name,
+                    value: d.id,
+                  }))}
+                  onChange={field.onChange}
+                  placeholder="Please choose topics"
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="title"

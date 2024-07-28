@@ -5,6 +5,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator"
 import { createId } from "@paralleldrive/cuid2"
 import { z } from "zod";
+import { topics } from "@/db/schema";
 
 const app = new Hono()
     .get("/", clerkMiddleware(), async (c) => {
@@ -15,7 +16,9 @@ const app = new Hono()
                 error: "Unauthorize user"
             }, 401);
         }
-        return c.json({ data: "" });
+
+        const data = await db.select().from(topics);
+        return c.json({ data });
     });
 
 export default app;

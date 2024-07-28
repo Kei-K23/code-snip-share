@@ -15,7 +15,9 @@ export const notes = pgTable("notes", {
     code: text("code").notNull(),
     userId: text('userId').notNull(),
     language: text('language').notNull(),
-    isPreDeleted: boolean("is_pre_deleted").default(false)
+    isPreDeleted: boolean("is_pre_deleted").default(false),
+    createdAt: timestamp('created_at').defaultNow(),
+    updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 export const topicsToNotes = pgTable('topics_to_notes', {
@@ -62,6 +64,18 @@ export const topicsToNotes = pgTable('topics_to_notes', {
 // }));
 
 export const insertTopicsSchema = createInsertSchema(topics);
+export const insertNotesWithTopicsSchema = z.object({
+    title: z.string().min(2).max(50),
+    description: z.string().min(2),
+    code: z.string().min(2),
+    language: z.string().min(2),
+    topics: z.array(
+        z.object({
+            label: z.string(),
+            value: z.string(),
+        })
+    ),
+});
 export const insertNotesSchema = createInsertSchema(notes);
 export const insertTopicsToNotesSchema = createInsertSchema(topicsToNotes);
 // export const insertCategorySchema = createInsertSchema(categories);

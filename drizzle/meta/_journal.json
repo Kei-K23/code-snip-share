@@ -15,6 +15,13 @@
       "when": 1722086502922,
       "tag": "0001_cultured_darkhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1722135292919,
+      "tag": "0002_overconfident_agent_zero",
+      "breakpoints": true
     }
   ]
 }

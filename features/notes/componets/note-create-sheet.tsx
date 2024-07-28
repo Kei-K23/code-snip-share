@@ -6,19 +6,13 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import React from "react";
-import { insertNotesSchema } from "@/db/schema";
+import { insertNotesWithTopicsSchema } from "@/db/schema";
 import { z } from "zod";
 import { useNewNote } from "../hooks/use-new-note";
 import { useCreateNote } from "../api/use-create-note";
 import NoteCreateForm from "./note-create-form";
 
-const formSchema = insertNotesSchema.omit({
-  id: true,
-  isPreDeleted: true,
-  userId: true,
-});
-
-type FormValues = z.input<typeof formSchema>;
+type FormValues = z.input<typeof insertNotesWithTopicsSchema>;
 
 export default function NoteCreateSheet() {
   const { isOpen, onClose } = useNewNote();
@@ -48,6 +42,7 @@ export default function NoteCreateSheet() {
             description: "",
             code: "",
             language: "",
+            topics: [],
           }}
           disabled={mutation.isPending}
         />
