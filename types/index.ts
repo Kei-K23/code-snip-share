@@ -20,6 +20,7 @@ interface DataItem {
     topics_to_notes: {
         topicId: string;
         noteId: string;
+        userId: string;
     };
     notes: Omit<Note, 'topics'>;
     topics: Topic;

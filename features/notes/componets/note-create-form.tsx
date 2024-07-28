@@ -47,7 +47,9 @@ export default function NoteCreateForm({
   onDelete,
   disabled,
 }: AccountCreateFormProps) {
-  const [language, setLanguage] = useState<string>("");
+  const [language, setLanguage] = useState<string>(
+    defaultValue?.language ?? ""
+  );
   const { resolvedTheme } = useTheme();
   // Fetch topics to use in note creation
   const { data, isLoading } = useGetTopics();
@@ -84,12 +86,13 @@ export default function NoteCreateForm({
               <FormLabel>Topics</FormLabel>
               <FormControl>
                 <MultiSelect
-                  disabled={isLoading}
+                  disabled={isLoading || disabled}
                   options={data?.map((d) => ({
                     label: d.name,
                     value: d.id,
                   }))}
                   onChange={field.onChange}
+                  defaultValue={defaultValue?.topics || []}
                   placeholder="Please choose topics"
                 />
               </FormControl>
@@ -136,6 +139,7 @@ export default function NoteCreateForm({
               <FormLabel>Language</FormLabel>
               <FormControl>
                 <Select
+                  disabled={disabled}
                   onValueChange={(e) => {
                     field.onChange(e);
                     setLanguage(e);
@@ -170,6 +174,7 @@ export default function NoteCreateForm({
                   language={language}
                   onChange={field.onChange}
                   resolvedTheme={resolvedTheme}
+                  defaultValue={field.value}
                 />
               </FormControl>
             </FormItem>

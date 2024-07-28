@@ -11,6 +11,7 @@ type MultiSelectProps = {
   disabled?: boolean;
   placeholder?: string;
   onChange?: (value: { label: string; value: string }[]) => void;
+  defaultValue?: { label: string; value: string }[];
 };
 
 export default function MultiSelect({
@@ -18,6 +19,7 @@ export default function MultiSelect({
   value,
   disabled,
   placeholder,
+  defaultValue,
   onChange,
 }: MultiSelectProps) {
   const { resolvedTheme } = useTheme();
@@ -82,6 +84,7 @@ export default function MultiSelect({
       }}
       value={formattedValue}
       options={options}
+      defaultValue={defaultValue}
       isDisabled={disabled}
       isMulti
     />

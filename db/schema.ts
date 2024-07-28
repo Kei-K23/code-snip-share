@@ -20,11 +20,13 @@ export const notes = pgTable("notes", {
     updatedAt: timestamp('updated_at').defaultNow(),
 });
 
+
 export const topicsToNotes = pgTable('topics_to_notes', {
+    id: text('id').primaryKey(),
     topicId: text('topic_id').notNull().references(() => topics.id),
     noteId: text('note_id').notNull().references(() => notes.id),
+    userId: text('userId').notNull(),
 });
-
 // export const accountsRelations = relations(accounts, ({ many }) => ({
 //     transactions: many(transactions)
 // }));

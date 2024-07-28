@@ -18,6 +18,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Skeleton } from "./ui/skeleton";
 
 type CodeSnippetCardProps = {
+  id: string;
   title: string;
   description: string;
   language: string;
@@ -28,6 +29,7 @@ type CodeSnippetCardProps = {
 };
 
 export default function CodeSnippetCard({
+  id,
   title,
   description,
   language,
@@ -43,7 +45,7 @@ export default function CodeSnippetCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">{title}</CardTitle>
-          <CardActions isOwner={authUserId === userId} />
+          <CardActions isOwner={authUserId === userId} id={id} />
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           {topics?.map((topic) => (

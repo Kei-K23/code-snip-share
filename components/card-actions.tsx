@@ -3,12 +3,15 @@ import { Button } from "./ui/button";
 import { Heart, Pen, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ActionTooltip from "./action-tooltip";
+import { useEditNote } from "@/features/notes/hooks/use-edit-note";
 
 type CardActionsProps = {
   isOwner: boolean;
+  id: string;
 };
 
-export default function CardActions({ isOwner }: CardActionsProps) {
+export default function CardActions({ isOwner, id }: CardActionsProps) {
+  const { onOpen } = useEditNote();
   return (
     <div className="flex items-center gap-x-2">
       <ActionTooltip title="Favorite">
@@ -18,7 +21,7 @@ export default function CardActions({ isOwner }: CardActionsProps) {
       </ActionTooltip>
       <div className={cn("items-center gap-x-2", isOwner ? "flex" : "hidden")}>
         <ActionTooltip title="Edit">
-          <Button variant={"ghost"} size={"sm"}>
+          <Button variant={"ghost"} size={"sm"} onClick={() => onOpen(id)}>
             <Pen className="size-4" />
           </Button>
         </ActionTooltip>

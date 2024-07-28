@@ -23,6 +23,7 @@ export default function DashboardPage() {
       {noteQuery?.map((note) => (
         <CodeSnippetCard
           key={note.id}
+          id={note.id}
           title={note.title}
           code={note.code}
           language={note.language}
