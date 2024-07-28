@@ -13,6 +13,7 @@ import { useGetNote } from "../api/use-get-note";
 import { Loader } from "lucide-react";
 import { useOpenNote } from "../hooks/use-open-note";
 import { useEditNote } from "../api/use-edit-note";
+import { useSoftDeleteNote } from "../api/use-soft-delete-note";
 
 type FormValues = z.input<typeof insertNotesWithTopicsSchema>;
 
@@ -21,9 +22,18 @@ export default function NoteEditSheet() {
   const { data: noteQuery, isLoading } = useGetNote(id!);
 
   const editMutation = useEditNote(id!);
+  const softDeleteMutation = useSoftDeleteNote(id!);
 
   const onSubmit = (values: FormValues) => {
     editMutation.mutate(values, {
+      onSuccess: () => {
+        onClose();
+      },
+    });
+  };
+
+  const onDelete = () => {
+    softDeleteMutation.mutate(id!, {
       onSuccess: () => {
         onClose();
       },
@@ -50,7 +60,7 @@ export default function NoteEditSheet() {
       };
 
   const loading = isLoading;
-
+  const pending = editMutation.isPending || softDeleteMutation.isPending;
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent>
@@ -61,15 +71,16 @@ export default function NoteEditSheet() {
           </SheetDescription>
         </SheetHeader>
         {loading ? (
-          <div className="flex justify-center items-center">
+          <div className="flex flex-1 justify-center items-center">
             <Loader className="size-5 animate-spin" />
           </div>
         ) : (
           <NoteCreateForm
             id={noteQuery ? noteQuery[0]?.id : ""}
             onSubmit={onSubmit}
+            onDelete={onDelete}
             defaultValue={defaultValue}
-            disabled={editMutation.isPending}
+            disabled={pending}
           />
         )}
       </SheetContent>

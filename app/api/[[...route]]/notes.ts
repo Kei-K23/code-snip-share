@@ -1,10 +1,10 @@
 import { db } from "@/db/drizzle";
 import { Hono } from "hono";
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth"
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, not } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator"
 import { createId } from "@paralleldrive/cuid2"
-import { z } from "zod";
+import { string, z } from "zod";
 import { insertNotesWithTopicsSchema, notes, topics, topicsToNotes } from "@/db/schema";
 import { Note, Topic } from "@/types";
 import { arraysEqual } from "@/lib/utils";
@@ -22,6 +22,11 @@ const app = new Hono()
         const data = await db.select().from(topicsToNotes)
             .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
             .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
+            .where(
+                and(
+                    eq(topicsToNotes.userId, auth.userId),
+                )
+            )
             .orderBy(desc(notes.createdAt));
 
         const uniqueNotesMap: { [key: string]: Note } = {};
@@ -50,8 +55,56 @@ const app = new Hono()
         });
 
         // Convert the map to an array
-        const uniqueNotesArray: Note[] = Object.values(uniqueNotesMap);
+        const uniqueNotesArray: Note[] = Object.values(uniqueNotesMap).filter(i => i.isPreDeleted === false);
 
+        return c.json({ data: uniqueNotesArray }, 200);
+    })
+    .get("/soft-delete", clerkMiddleware(), async (c) => {
+        const auth = getAuth(c);
+        // If user is not authenticated
+        if (!auth?.userId) {
+            return c.json({
+                error: "Unauthorize user"
+            }, 401);
+        }
+
+        const data = await db.select().from(topicsToNotes)
+            .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
+            .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
+            .where(
+                and(
+                    eq(topicsToNotes.userId, auth.userId),
+                )
+            )
+            .orderBy(desc(notes.createdAt));
+
+        const uniqueNotesMap: { [key: string]: Note } = {};
+
+        // Iterate through each item in the array
+        data.forEach(item => {
+            if (!item || !item?.notes || !item?.topics || !item?.topics_to_notes) {
+                return;
+            }
+            const noteId = item.notes.id;
+            const topic: Topic = {
+                id: item.topics.id,
+                name: item.topics.name
+            };
+
+            // If the noteId is not in the map, add it with the note and topic
+            if (!uniqueNotesMap[noteId]) {
+                uniqueNotesMap[noteId] = {
+                    ...item.notes,
+                    topics: [topic]
+                };
+            } else {
+                // If the noteId is already in the map, just add the topic to the topics array
+                uniqueNotesMap[noteId].topics.push(topic);
+            }
+        });
+
+        // Convert the map to an array
+        const uniqueNotesArray: Note[] = Object.values(uniqueNotesMap).filter(i => i.isPreDeleted === false);
         return c.json({ data: uniqueNotesArray }, 200);
     })
     .get("/:id", clerkMiddleware(), zValidator("param", z.object({
@@ -76,7 +129,9 @@ const app = new Hono()
         const data = await db.select().from(topicsToNotes)
             .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
             .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
-            .where(eq(topicsToNotes.noteId, id))
+            .where(
+                and(eq(topicsToNotes.noteId, id), eq(topicsToNotes.userId, auth.userId))
+            )
             .orderBy(desc(notes.createdAt));
 
         const uniqueNotesMap: { [key: string]: Note } = {};
@@ -224,6 +279,34 @@ const app = new Hono()
                 userId: auth.userId
             })));
         }
+        return c.json({ data }, 200);
+    })
+    .patch('/soft-delete/:id', clerkMiddleware(), zValidator("param", z.object({
+        id: string()
+    })), async (c) => {
+        const auth = getAuth(c);
+        const { id } = c.req.valid("param");
+
+        if (!id) {
+            return c.json({
+                error: "Missing id"
+            }, 400);
+        }
+
+        if (!auth?.userId) {
+            return c.json({
+                error: "Unauthorize user"
+            }, 401);
+        }
+
+        const [data] = await db.update(notes).set({
+            isPreDeleted: true
+        }).where(and(
+            eq(notes.id, id),
+            eq(notes.userId, auth.userId),
+            not(notes.isPreDeleted)
+        )).returning();
+
         return c.json({ data }, 200);
     });
 
