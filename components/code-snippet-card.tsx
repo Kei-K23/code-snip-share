@@ -15,6 +15,7 @@ import { Badge } from "./ui/badge";
 import { format } from "date-fns";
 import CardActions from "./card-actions";
 import { useAuth } from "@clerk/nextjs";
+import { Skeleton } from "./ui/skeleton";
 
 type CodeSnippetCardProps = {
   title: string;
@@ -68,3 +69,28 @@ export default function CodeSnippetCard({
     </Card>
   );
 }
+
+export const CodeSnippetCardSkeleton = () => {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <Skeleton className="w-[200px] h-4" />
+          <Skeleton className="w-[100px] h-4" />
+        </div>
+        <div>
+          <Skeleton className="w-[70px] h-4" />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="w-full h-4" />
+        <Skeleton className="w-[300px] h-4 mt-2" />
+        <Skeleton className="w-full h-[250px] mt-4" />
+        <CardFooter className="p-0 w-full flex items-center justify-between mt-4">
+          <Skeleton className="w-[70px] h-4" />
+          <Skeleton className="w-[70px] h-4" />
+        </CardFooter>
+      </CardContent>
+    </Card>
+  );
+};
