@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import React, { useMemo } from "react";
 import { StylesConfig } from "react-select";
 import Select from "react-select";
@@ -19,22 +20,28 @@ export default function MultiSelect({
   placeholder,
   onChange,
 }: MultiSelectProps) {
+  const { resolvedTheme } = useTheme();
+
   const multiSelectStyles: StylesConfig = {
-    control: (styles) => ({ ...styles, backgroundColor: "black" }),
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: resolvedTheme === "dark" ? "black" : "white",
+      color: "white",
+    }),
     option: (styles) => {
       return {
         ...styles,
         opacity: 1000,
-        backgroundColor: "black",
+        backgroundColor: resolvedTheme === "dark" ? "black" : "white",
         ":hover": {
-          backgroundColor: "gray",
+          backgroundColor: "skyblue",
         },
       };
     },
     multiValue: (styles) => {
       return {
         ...styles,
-        backgroundColor: "gray",
+        backgroundColor: "skyblue",
       };
     },
     multiValueLabel: (styles) => ({
@@ -43,12 +50,13 @@ export default function MultiSelect({
     }),
     multiValueRemove: (styles) => ({
       ...styles,
-      color: "red",
+      color: "gray",
       ":hover": {
         backgroundColor: "red",
         color: "white",
       },
     }),
+    singleValue: (defaultStyles) => ({ ...defaultStyles, color: "#fff" }),
   };
 
   const formattedValue = useMemo(() => {
