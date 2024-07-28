@@ -7,7 +7,7 @@ export default function DashboardPage() {
   const { data: noteQuery, isLoading } = useGetNotes();
 
   return (
-    <div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {noteQuery?.map((note) => (
         <CodeSnippetCard
           key={note.id}
@@ -17,6 +17,7 @@ export default function DashboardPage() {
           description={note.description}
           createdAt={note.createdAt}
           topics={note.topics}
+          userId={note.userId}
         />
       ))}
     </div>
