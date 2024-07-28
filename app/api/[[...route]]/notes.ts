@@ -7,6 +7,7 @@ import { createId } from "@paralleldrive/cuid2"
 import { z } from "zod";
 import { insertNotesWithTopicsSchema, notes, topics, topicsToNotes } from "@/db/schema";
 import { Note, Topic } from "@/types";
+import { arraysEqual } from "@/lib/utils";
 
 const app = new Hono()
     .get("/", clerkMiddleware(), async (c) => {
@@ -80,6 +81,7 @@ const app = new Hono()
 
         const uniqueNotesMap: { [key: string]: Note } = {};
 
+        // TODO : Find the way to achieve more resource save and better performance
         // Iterate through each item in the array
         data.forEach(item => {
             if (!item || !item?.notes || !item?.topics || !item?.topics_to_notes) {
@@ -182,23 +184,46 @@ const app = new Hono()
             eq(notes.userId, auth.userId)
         )).returning();
 
-        // To update the topics, first delete existing all topics notes relationships data, then create newly data that send from user
-        // Delete topics notes relationship data
-        await db.delete(topicsToNotes).where(and
+        const newTopicsToNotesData = values.topics.map(topic => ({
+            noteId: id,
+            userId: auth.userId,
+            topicId: topic.value
+        }))
+
+        // Retrieve all related topic to notes data
+        const existingTopicsToNotesData = await db.select({
+            noteId: topicsToNotes.noteId,
+            userId: topicsToNotes.userId,
+            topicId: topicsToNotes.topicId,
+        }).from(topicsToNotes).where(and
             (
-                eq(topicsToNotes.topicId, id),
+                eq(topicsToNotes.noteId, id),
                 eq(topicsToNotes.userId, auth.userId)
             )
         );
 
-        // Create many to many relationship between notes and topics
-        await db.insert(topicsToNotes).values(values.topics.map(t => ({
-            id: createId(),
-            topicId: t.value,
-            noteId: data.id,
-            userId: auth.userId
-        })));
+        // Compare topic to notes relationships data is changed
+        const isEqual = arraysEqual(newTopicsToNotesData, existingTopicsToNotesData)
 
+        if (!isEqual) {
+            // TODO : Find the way to achieve more resource save and better performance
+            // To update the topics, first delete existing all topics notes relationships data, then create newly data that send from user
+            // Delete topics notes relationship data
+            await db.delete(topicsToNotes).where(and
+                (
+                    eq(topicsToNotes.noteId, id),
+                    eq(topicsToNotes.userId, auth.userId)
+                )
+            );
+
+            // Create many to many relationship between notes and topics
+            await db.insert(topicsToNotes).values(values.topics.map(t => ({
+                id: createId(),
+                topicId: t.value,
+                noteId: data.id,
+                userId: auth.userId
+            })));
+        }
         return c.json({ data }, 200);
     });
 

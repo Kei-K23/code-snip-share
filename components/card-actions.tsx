@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Heart, Pen, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ActionTooltip from "./action-tooltip";
-import { useEditNote } from "@/features/notes/hooks/use-edit-note";
+import { useOpenNote } from "@/features/notes/hooks/use-open-note";
 
 type CardActionsProps = {
   isOwner: boolean;
@@ -11,7 +11,7 @@ type CardActionsProps = {
 };
 
 export default function CardActions({ isOwner, id }: CardActionsProps) {
-  const { onOpen } = useEditNote();
+  const { onOpen } = useOpenNote();
   return (
     <div className="flex items-center gap-x-2">
       <ActionTooltip title="Favorite">

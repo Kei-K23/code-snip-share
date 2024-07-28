@@ -44,7 +44,7 @@ export default function CodeEditor({
       name="code_snip_share_editor"
       onChange={onChange}
       readOnly={isReadOnly}
-      defaultValue={defaultValue}
+      value={defaultValue}
       fontSize={14}
       lineHeight={19}
       showPrintMargin={true}

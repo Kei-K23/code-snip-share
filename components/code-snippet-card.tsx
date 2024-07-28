@@ -40,6 +40,8 @@ export default function CodeSnippetCard({
 }: CodeSnippetCardProps) {
   const { resolvedTheme } = useTheme();
   const { userId: authUserId } = useAuth();
+  console.log(code);
+
   return (
     <Card>
       <CardHeader>

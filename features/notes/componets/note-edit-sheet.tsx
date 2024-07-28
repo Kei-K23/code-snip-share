@@ -8,22 +8,22 @@ import {
 import React from "react";
 import { insertNotesWithTopicsSchema } from "@/db/schema";
 import { z } from "zod";
-import { useCreateNote } from "../api/use-create-note";
 import NoteCreateForm from "./note-create-form";
-import { useEditNote } from "../hooks/use-edit-note";
 import { useGetNote } from "../api/use-get-note";
 import { Loader } from "lucide-react";
+import { useOpenNote } from "../hooks/use-open-note";
+import { useEditNote } from "../api/use-edit-note";
 
 type FormValues = z.input<typeof insertNotesWithTopicsSchema>;
 
 export default function NoteEditSheet() {
-  const { isOpen, onClose, id } = useEditNote();
+  const { isOpen, onClose, id } = useOpenNote();
   const { data: noteQuery, isLoading } = useGetNote(id!);
 
-  const mutation = useCreateNote();
+  const editMutation = useEditNote(id!);
 
   const onSubmit = (values: FormValues) => {
-    mutation.mutate(values, {
+    editMutation.mutate(values, {
       onSuccess: () => {
         onClose();
       },
@@ -49,7 +49,7 @@ export default function NoteEditSheet() {
         topics: [],
       };
 
-  const loading = isLoading || mutation.isPending;
+  const loading = isLoading;
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -69,7 +69,7 @@ export default function NoteEditSheet() {
             id={noteQuery ? noteQuery[0]?.id : ""}
             onSubmit={onSubmit}
             defaultValue={defaultValue}
-            disabled={loading}
+            disabled={editMutation.isPending}
           />
         )}
       </SheetContent>
