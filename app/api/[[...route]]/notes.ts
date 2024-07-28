@@ -104,7 +104,7 @@ const app = new Hono()
         });
 
         // Convert the map to an array
-        const uniqueNotesArray: Note[] = Object.values(uniqueNotesMap).filter(i => i.isPreDeleted === false);
+        const uniqueNotesArray: Note[] = Object.values(uniqueNotesMap).filter(i => i.isPreDeleted === true);
         return c.json({ data: uniqueNotesArray }, 200);
     })
     .get("/:id", clerkMiddleware(), zValidator("param", z.object({
@@ -305,6 +305,34 @@ const app = new Hono()
             eq(notes.id, id),
             eq(notes.userId, auth.userId),
             not(notes.isPreDeleted)
+        )).returning();
+
+        return c.json({ data }, 200);
+    })
+    .patch('/restore/:id', clerkMiddleware(), zValidator("param", z.object({
+        id: string()
+    })), async (c) => {
+        const auth = getAuth(c);
+        const { id } = c.req.valid("param");
+
+        if (!id) {
+            return c.json({
+                error: "Missing id"
+            }, 400);
+        }
+
+        if (!auth?.userId) {
+            return c.json({
+                error: "Unauthorize user"
+            }, 401);
+        }
+
+        const [data] = await db.update(notes).set({
+            isPreDeleted: false
+        }).where(and(
+            eq(notes.id, id),
+            eq(notes.userId, auth.userId),
+            eq(notes.isPreDeleted, true)
         )).returning();
 
         return c.json({ data }, 200);

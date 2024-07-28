@@ -40,13 +40,13 @@ export default function CodeEditor({
       }}
       placeholder="Share your code"
       mode={language ?? ""}
-      theme={resolvedTheme === "dark" ? "monokai" : "tomorrow"}
+      theme={resolvedTheme === "dark" ? "twilight" : "tomorrow"}
       name="code_snip_share_editor"
       onChange={onChange}
       readOnly={isReadOnly}
       value={defaultValue}
       fontSize={14}
-      lineHeight={19}
+      lineHeight={22}
       showPrintMargin={true}
       showGutter={true}
       highlightActiveLine={true}

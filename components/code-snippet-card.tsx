@@ -26,6 +26,7 @@ type CodeSnippetCardProps = {
   createdAt: Date | string | null;
   topics?: { id: string; name: string }[];
   userId: string;
+  isPreDeleted?: boolean | null;
 };
 
 export default function CodeSnippetCard({
@@ -37,6 +38,7 @@ export default function CodeSnippetCard({
   createdAt,
   topics,
   userId,
+  isPreDeleted,
 }: CodeSnippetCardProps) {
   const { resolvedTheme } = useTheme();
   const { userId: authUserId } = useAuth();
@@ -47,7 +49,11 @@ export default function CodeSnippetCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">{title}</CardTitle>
-          <CardActions isOwner={authUserId === userId} id={id} />
+          <CardActions
+            isOwner={authUserId === userId}
+            id={id}
+            isPreDeleted={isPreDeleted}
+          />
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           {topics?.map((topic) => (
@@ -56,7 +62,7 @@ export default function CodeSnippetCard({
         </div>
       </CardHeader>
       <CardContent>
-        <p className="mb-4 text-[16px]">{description}</p>
+        <p className="mb-4 text-[16px] line-clamp-3">{description}</p>
         <CodeEditor
           language={language}
           resolvedTheme={resolvedTheme}
