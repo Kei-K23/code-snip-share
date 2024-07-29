@@ -309,6 +309,40 @@ const app = new Hono()
 
         return c.json({ data }, 200);
     })
+    .delete('/:id', clerkMiddleware(), zValidator("param", z.object({
+        id: string()
+    })), async (c) => {
+        const auth = getAuth(c);
+        const { id } = c.req.valid("param");
+
+        if (!id) {
+            return c.json({
+                error: "Missing id"
+            }, 400);
+        }
+
+        if (!auth?.userId) {
+            return c.json({
+                error: "Unauthorize user"
+            }, 401);
+        }
+
+        // Delete the relationships for topic and note
+        await db.delete(topicsToNotes).where(and
+            (
+                eq(topicsToNotes.noteId, id),
+                eq(topicsToNotes.userId, auth.userId)
+            )
+        );
+
+        const [data] = await db.delete(notes).where(and(
+            eq(notes.id, id),
+            eq(notes.userId, auth.userId),
+            eq(notes.isPreDeleted, true)
+        )).returning();
+
+        return c.json({ data }, 200);
+    })
     .patch('/restore/:id', clerkMiddleware(), zValidator("param", z.object({
         id: string()
     })), async (c) => {

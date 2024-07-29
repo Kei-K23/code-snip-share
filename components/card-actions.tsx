@@ -6,6 +6,7 @@ import ActionTooltip from "./action-tooltip";
 import { useOpenNote } from "@/features/notes/hooks/use-open-note";
 import { useSoftDeleteNote } from "@/features/notes/api/use-soft-delete-note";
 import { useRestoreNote } from "@/features/notes/api/use-restore-note";
+import { useDeleteNote } from "@/features/notes/api/use-delete-note";
 
 type CardActionsProps = {
   isOwner: boolean;
@@ -20,10 +21,14 @@ export default function CardActions({
 }: CardActionsProps) {
   const { onOpen } = useOpenNote();
   const softDeleteMutation = useSoftDeleteNote(id!);
+  const deleteMutation = useDeleteNote(id!);
   const restoreMutation = useRestoreNote(id!);
 
   const onSoftDelete = () => {
     softDeleteMutation.mutate(id!);
+  };
+  const onDelete = () => {
+    deleteMutation.mutate(id!);
   };
   const onRestore = () => {
     restoreMutation.mutate(id!);
@@ -51,7 +56,7 @@ export default function CardActions({
             <Button
               variant={"destructive"}
               size={"sm"}
-              onClick={onSoftDelete}
+              onClick={onDelete}
               disabled={pending}
             >
               <Trash2 className="size-4" />
