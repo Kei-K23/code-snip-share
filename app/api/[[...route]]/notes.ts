@@ -5,7 +5,7 @@ import { and, desc, eq, inArray, not } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator"
 import { createId } from "@paralleldrive/cuid2"
 import { string, z } from "zod";
-import { insertNotesWithTopicsSchema, notes, topics, topicsToNotes } from "@/db/schema";
+import { favorites, insertNotesWithTopicsSchema, notes, topics, topicsToNotes } from "@/db/schema";
 import { Note, Topic } from "@/types";
 import { arraysEqual } from "@/lib/utils";
 
@@ -22,6 +22,7 @@ const app = new Hono()
         const data = await db.select().from(topicsToNotes)
             .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
             .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
+            .leftJoin(favorites, eq(topicsToNotes.noteId, favorites.noteId))
             .where(
                 and(
                     eq(topicsToNotes.userId, auth.userId),
@@ -46,7 +47,8 @@ const app = new Hono()
             if (!uniqueNotesMap[noteId]) {
                 uniqueNotesMap[noteId] = {
                     ...item.notes,
-                    topics: [topic]
+                    topics: [topic],
+                    favorite: item.favorites
                 };
             } else {
                 // If the noteId is already in the map, just add the topic to the topics array
@@ -71,6 +73,7 @@ const app = new Hono()
         const data = await db.select().from(topicsToNotes)
             .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
             .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
+            .leftJoin(favorites, eq(topicsToNotes.noteId, favorites.noteId))
             .where(
                 and(
                     eq(topicsToNotes.userId, auth.userId),
@@ -95,7 +98,8 @@ const app = new Hono()
             if (!uniqueNotesMap[noteId]) {
                 uniqueNotesMap[noteId] = {
                     ...item.notes,
-                    topics: [topic]
+                    topics: [topic],
+                    favorite: item.favorites
                 };
             } else {
                 // If the noteId is already in the map, just add the topic to the topics array
@@ -129,6 +133,7 @@ const app = new Hono()
         const data = await db.select().from(topicsToNotes)
             .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
             .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
+            .leftJoin(favorites, eq(topicsToNotes.noteId, favorites.noteId))
             .where(
                 and(eq(topicsToNotes.noteId, id), eq(topicsToNotes.userId, auth.userId))
             )
@@ -152,7 +157,8 @@ const app = new Hono()
             if (!uniqueNotesMap[noteId]) {
                 uniqueNotesMap[noteId] = {
                     ...item.notes,
-                    topics: [topic]
+                    topics: [topic],
+                    favorite: item.favorites
                 };
             } else {
                 // If the noteId is already in the map, just add the topic to the topics array

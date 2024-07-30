@@ -9,11 +9,18 @@ interface Note {
     createdAt: Date | null;
     updatedAt: Date | null;
     topics: Topic[];
+    favorite: Favorite | null
 }
 
 interface Topic {
     id: string;
     name: string;
+}
+
+interface Favorite {
+    id: string;
+    userId: string;
+    noteId: string;
 }
 
 interface DataItem {
@@ -29,5 +36,6 @@ interface DataItem {
 export type {
     Note,
     Topic,
-    DataItem
+    DataItem,
+    Favorite
 }

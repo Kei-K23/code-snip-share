@@ -20,10 +20,15 @@ export const notes = pgTable("notes", {
     updatedAt: timestamp('updated_at').defaultNow(),
 });
 
-
 export const topicsToNotes = pgTable('topics_to_notes', {
     id: text('id').primaryKey(),
     topicId: text('topic_id').notNull().references(() => topics.id),
+    noteId: text('note_id').notNull().references(() => notes.id),
+    userId: text('userId').notNull(),
+});
+
+export const favorites = pgTable('favorites', {
+    id: text('id').primaryKey(),
     noteId: text('note_id').notNull().references(() => notes.id),
     userId: text('userId').notNull(),
 });
@@ -79,6 +84,7 @@ export const insertNotesWithTopicsSchema = z.object({
     ),
 });
 export const insertNotesSchema = createInsertSchema(notes);
+export const insertFavoritesSchema = createInsertSchema(favorites);
 export const insertTopicsToNotesSchema = createInsertSchema(topicsToNotes);
 // export const insertCategorySchema = createInsertSchema(categories);
 // export const insertTransactionSchema = createInsertSchema(transactions, {

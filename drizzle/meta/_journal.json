@@ -8,6 +8,13 @@
       "when": 1722163716339,
       "tag": "0000_large_frog_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1722263014504,
+      "tag": "0001_wealthy_wallop",
+      "breakpoints": true
     }
   ]
 }

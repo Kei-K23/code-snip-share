@@ -7,6 +7,7 @@ import { useOpenNote } from "@/features/notes/hooks/use-open-note";
 import { useSoftDeleteNote } from "@/features/notes/api/use-soft-delete-note";
 import { useRestoreNote } from "@/features/notes/api/use-restore-note";
 import { useDeleteNote } from "@/features/notes/api/use-delete-note";
+import { useCreateFavorite } from "@/features/notes/api/use-create-favorite";
 
 type CardActionsProps = {
   isOwner: boolean;
@@ -23,6 +24,7 @@ export default function CardActions({
   const softDeleteMutation = useSoftDeleteNote(id!);
   const deleteMutation = useDeleteNote(id!);
   const restoreMutation = useRestoreNote(id!);
+  const createFavoriteMutation = useCreateFavorite();
 
   const onSoftDelete = () => {
     softDeleteMutation.mutate(id!);
@@ -33,8 +35,15 @@ export default function CardActions({
   const onRestore = () => {
     restoreMutation.mutate(id!);
   };
+  const onCreateFavorite = () => {
+    createFavoriteMutation.mutate({ noteId: id });
+  };
 
-  const pending = softDeleteMutation.isPending || restoreMutation.isPending;
+  const pending =
+    softDeleteMutation.isPending ||
+    restoreMutation.isPending ||
+    deleteMutation.isPending ||
+    createFavoriteMutation.isPending;
 
   return (
     <div className="flex items-center gap-x-2">
@@ -66,7 +75,12 @@ export default function CardActions({
       ) : (
         <>
           <ActionTooltip title="Favorite">
-            <Button variant={"ghost"} size={"sm"} disabled={pending}>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              disabled={pending}
+              onClick={onCreateFavorite}
+            >
               <Heart className="size-4" />
             </Button>
           </ActionTooltip>
