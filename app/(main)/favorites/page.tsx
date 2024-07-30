@@ -40,6 +40,7 @@ export default function FavoritesPage() {
               topics={note.topics}
               userId={note.userId}
               isPreDeleted={note.isPreDeleted}
+              favorite={note.favorite}
             />
           ))}
         </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { ArchiveRestore, Heart, Pen, Trash2 } from "lucide-react";
+import { ArchiveRestore, Heart, HeartOff, Pen, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ActionTooltip from "./action-tooltip";
 import { useOpenNote } from "@/features/notes/hooks/use-open-note";
@@ -8,21 +8,26 @@ import { useSoftDeleteNote } from "@/features/notes/api/use-soft-delete-note";
 import { useRestoreNote } from "@/features/notes/api/use-restore-note";
 import { useDeleteNote } from "@/features/notes/api/use-delete-note";
 import { useCreateFavorite } from "@/features/notes/api/use-create-favorite";
+import { Favorite } from "@/types";
+import { useDeleteFavorite } from "@/features/notes/api/use-delete-favorite";
 
 type CardActionsProps = {
   isOwner: boolean;
   id: string;
   isPreDeleted?: boolean | null;
+  favorite?: Favorite | null;
 };
 
 export default function CardActions({
   isOwner,
   id,
   isPreDeleted,
+  favorite,
 }: CardActionsProps) {
   const { onOpen } = useOpenNote();
   const softDeleteMutation = useSoftDeleteNote(id!);
   const deleteMutation = useDeleteNote(id!);
+  const deleteFavoriteMutation = useDeleteFavorite(favorite?.id!);
   const restoreMutation = useRestoreNote(id!);
   const createFavoriteMutation = useCreateFavorite();
 
@@ -31,6 +36,9 @@ export default function CardActions({
   };
   const onDelete = () => {
     deleteMutation.mutate(id!);
+  };
+  const onDeleteFavorite = () => {
+    deleteFavoriteMutation.mutate(favorite?.id!);
   };
   const onRestore = () => {
     restoreMutation.mutate(id!);
@@ -43,6 +51,7 @@ export default function CardActions({
     softDeleteMutation.isPending ||
     restoreMutation.isPending ||
     deleteMutation.isPending ||
+    deleteFavoriteMutation.isPending ||
     createFavoriteMutation.isPending;
 
   return (
@@ -74,16 +83,30 @@ export default function CardActions({
         </div>
       ) : (
         <>
-          <ActionTooltip title="Favorite">
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              disabled={pending}
-              onClick={onCreateFavorite}
-            >
-              <Heart className="size-4" />
-            </Button>
-          </ActionTooltip>
+          {favorite ? (
+            <ActionTooltip title="Remove from favorite">
+              <Button
+                variant={"ghost"}
+                size={"sm"}
+                disabled={pending}
+                onClick={onDeleteFavorite}
+              >
+                <HeartOff className="size-4" />
+              </Button>
+            </ActionTooltip>
+          ) : (
+            <ActionTooltip title="Favorite">
+              <Button
+                variant={"ghost"}
+                size={"sm"}
+                disabled={pending}
+                onClick={onCreateFavorite}
+              >
+                <Heart className="size-4" />
+              </Button>
+            </ActionTooltip>
+          )}
+
           <div
             className={cn("items-center gap-x-2", isOwner ? "flex" : "hidden")}
           >

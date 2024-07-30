@@ -16,6 +16,7 @@ import { format } from "date-fns";
 import CardActions from "./card-actions";
 import { useAuth } from "@clerk/nextjs";
 import { Skeleton } from "./ui/skeleton";
+import { Favorite } from "@/types";
 
 type CodeSnippetCardProps = {
   id: string;
@@ -27,6 +28,7 @@ type CodeSnippetCardProps = {
   topics?: { id: string; name: string }[];
   userId: string;
   isPreDeleted?: boolean | null;
+  favorite?: Favorite | null;
 };
 
 export default function CodeSnippetCard({
@@ -39,10 +41,10 @@ export default function CodeSnippetCard({
   topics,
   userId,
   isPreDeleted,
+  favorite,
 }: CodeSnippetCardProps) {
   const { resolvedTheme } = useTheme();
   const { userId: authUserId } = useAuth();
-  console.log(code);
 
   return (
     <Card>
@@ -53,6 +55,7 @@ export default function CodeSnippetCard({
             isOwner={authUserId === userId}
             id={id}
             isPreDeleted={isPreDeleted}
+            favorite={favorite}
           />
         </div>
         <div className="flex flex-wrap gap-2 items-center">

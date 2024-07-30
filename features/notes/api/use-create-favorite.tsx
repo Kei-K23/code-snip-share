@@ -18,6 +18,7 @@ export const useCreateFavorite = () => {
       toast.success("Successfully added to favorites lists");
       // Revalidate the fetch functions
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
     onError: () => {
       toast.error("Could not add the snippet to favorites lists");

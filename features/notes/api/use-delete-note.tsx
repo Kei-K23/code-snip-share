@@ -17,6 +17,8 @@ export const useDeleteNote = (id: string) => {
       toast.success("Code snippet permanently deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["notes", { id }] });
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      queryClient.invalidateQueries({ queryKey: ["notes", "soft-delete"] });
     },
     onError: () => {
       toast.error("Could not delete the code snippet");

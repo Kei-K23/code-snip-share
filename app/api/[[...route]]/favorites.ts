@@ -109,6 +109,19 @@ const app = new Hono()
             }, 400);
         }
 
+        const [existingData] = await db.select().from(favorites).where(and(
+            eq(favorites.userId, auth.userId),
+            eq(favorites.id, id)
+        ));
+        console.log(existingData);
+
+        if (!existingData) {
+            return c.json({
+                error: "Item is not in favorite"
+            }, 400);
+        }
+
+
         const [data] = await db.delete(favorites).where(and(
             eq(favorites.userId, auth.userId),
             eq(favorites.id, id)
