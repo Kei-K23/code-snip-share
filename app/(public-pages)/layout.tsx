@@ -1,3 +1,4 @@
+import PublicHeader from "@/components/public-header";
 import React from "react";
 
 export default function PublicPagesLayout({
@@ -7,6 +8,7 @@ export default function PublicPagesLayout({
 }) {
   return (
     <>
+      <PublicHeader />
       <main>{children}</main>
     </>
   );

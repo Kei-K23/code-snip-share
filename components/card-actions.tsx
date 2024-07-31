@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 import ActionTooltip from "./action-tooltip";
 import { useOpenNote } from "@/features/notes/hooks/use-open-note";
 import { useSoftDeleteNote } from "@/features/notes/api/use-soft-delete-note";
-import { useRestoreNote } from "@/features/notes/api/use-restore-note";
-import { useDeleteNote } from "@/features/notes/api/use-delete-note";
-import { useCreateFavorite } from "@/features/notes/api/use-create-favorite";
+import { useRestoreNote } from "@/features/trash/api/use-restore-note";
+import { useDeleteNote } from "@/features/trash/api/use-delete-note";
+import { useCreateFavorite } from "@/features/favorites/api/use-create-favorite";
 import { Favorite } from "@/types";
-import { useDeleteFavorite } from "@/features/notes/api/use-delete-favorite";
+import { useDeleteFavorite } from "@/features/favorites/api/use-delete-favorite";
 import useConfirm from "@/hooks/use-confirm";
 
 type CardActionsProps = {

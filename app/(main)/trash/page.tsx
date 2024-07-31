@@ -2,7 +2,7 @@
 import CodeSnippetCard, {
   CodeSnippetCardSkeleton,
 } from "@/components/code-snippet-card";
-import { useGetSoftDeletedNotes } from "@/features/notes/api/use-get-soft-deleted-notes";
+import { useGetSoftDeletedNotes } from "@/features/trash/api/use-get-soft-deleted-notes";
 import React from "react";
 
 export default function TrashPage() {

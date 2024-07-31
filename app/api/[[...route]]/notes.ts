@@ -61,6 +61,52 @@ const app = new Hono()
 
         return c.json({ data: uniqueNotesArray }, 200);
     })
+    .get("/all", clerkMiddleware(), async (c) => {
+        const auth = getAuth(c);
+        // If user is not authenticated
+        if (!auth?.userId) {
+            return c.json({
+                error: "Unauthorize user"
+            }, 401);
+        }
+
+        const data = await db.select().from(topicsToNotes)
+            .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
+            .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
+            .leftJoin(favorites, eq(topicsToNotes.noteId, favorites.noteId))
+            .orderBy(desc(notes.createdAt));
+
+        const uniqueNotesMap: { [key: string]: Note } = {};
+
+        // Iterate through each item in the array
+        data.forEach(item => {
+            if (!item || !item?.notes || !item?.topics || !item?.topics_to_notes || item.notes.isPreDeleted) {
+                return;
+            }
+            const noteId = item.notes.id;
+            const topic: Topic = {
+                id: item.topics.id,
+                name: item.topics.name
+            };
+
+            // If the noteId is not in the map, add it with the note and topic
+            if (!uniqueNotesMap[noteId]) {
+                uniqueNotesMap[noteId] = {
+                    ...item.notes,
+                    topics: [topic],
+                    favorite: item.favorites
+                };
+            } else {
+                // If the noteId is already in the map, just add the topic to the topics array
+                uniqueNotesMap[noteId].topics.push(topic);
+            }
+        });
+
+        // Convert the map to an array
+        const uniqueNotesArray: Note[] = Object.values(uniqueNotesMap).filter(i => i.isPreDeleted === false);
+
+        return c.json({ data: uniqueNotesArray }, 200);
+    })
     .get("/soft-delete", clerkMiddleware(), async (c) => {
         const auth = getAuth(c);
         // If user is not authenticated

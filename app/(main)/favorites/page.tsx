@@ -2,7 +2,7 @@
 import CodeSnippetCard, {
   CodeSnippetCardSkeleton,
 } from "@/components/code-snippet-card";
-import { useGetFavorites } from "@/features/notes/api/use-get-favorites";
+import { useGetFavorites } from "@/features/favorites/api/use-get-favorites";
 import React from "react";
 
 export default function FavoritesPage() {
