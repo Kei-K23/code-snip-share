@@ -25,13 +25,13 @@ export default function DashboardPage() {
         <div className="flex flex-1 justify-center items-center flex-col gap-y-5">
           <p className="text-center text-muted-foreground">No code snippet.</p>
           <Button onClick={onOpen} variant={"outline"}>
-            Create code snippet
+            Create new code snippet
           </Button>
         </div>
       );
     } else {
       return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {noteQuery?.map((note) => (
             <CodeSnippetCard
               key={note.id}

@@ -32,7 +32,7 @@ const app = new Hono()
         const uniqueNotesMap: { [key: string]: Note } = {};
         // Iterate through each item in the array
         data.forEach(item => {
-            if (!item || !item?.notes || !item?.topics || !item?.topics_to_notes || item.favorites === null || !item.favorites) {
+            if (!item || !item?.notes || !item?.topics || !item?.topics_to_notes || item.favorites === null || !item.favorites || item.notes.isPreDeleted) {
                 return;
             }
 
@@ -113,7 +113,6 @@ const app = new Hono()
             eq(favorites.userId, auth.userId),
             eq(favorites.id, id)
         ));
-        console.log(existingData);
 
         if (!existingData) {
             return c.json({

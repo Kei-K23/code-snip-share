@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   Bell,
   CodeSquareIcon,
+  Globe2,
   Loader2,
   Menu,
   PlusCircle,
@@ -20,9 +21,10 @@ import { ClerkLoaded, ClerkLoading, UserButton } from "@clerk/nextjs";
 import { ModeToggle } from "../mode-toggle";
 import { useTheme } from "next-themes";
 import { dark } from "@clerk/themes";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useNewNote } from "@/features/notes/hooks/use-new-note";
+import { Card, CardContent } from "../ui/card";
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -50,6 +52,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
   const { onOpen } = useNewNote();
+  const router = useRouter();
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -87,6 +90,17 @@ export function MainLayout({ children }: MainLayoutProps) {
               ))}
             </nav>
           </div>
+          <div className="mt-auto">
+            <Button
+              size="sm"
+              className="w-full flex items-center gap-2"
+              onClick={() => router.push("/community")}
+              variant={"outline"}
+            >
+              <Globe2 />
+              Explore the community
+            </Button>
+          </div>
         </div>
       </div>
       <div className="flex flex-col">
@@ -103,7 +117,7 @@ export function MainLayout({ children }: MainLayoutProps) {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
-              <nav className="grid gap-2 text-lg font-medium">
+              <nav className=" grid gap-2 text-lg font-medium">
                 <Link
                   href="/dashboard"
                   className="flex items-center gap-2 text-lg font-semibold"
@@ -127,6 +141,17 @@ export function MainLayout({ children }: MainLayoutProps) {
                   </Link>
                 ))}
               </nav>
+              <div className="mt-auto">
+                <Button
+                  size="sm"
+                  className="w-full flex items-center gap-2"
+                  onClick={() => router.push("/community")}
+                  variant={"outline"}
+                >
+                  <Globe2 />
+                  Explore the community
+                </Button>
+              </div>
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">

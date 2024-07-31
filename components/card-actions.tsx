@@ -10,6 +10,7 @@ import { useDeleteNote } from "@/features/notes/api/use-delete-note";
 import { useCreateFavorite } from "@/features/notes/api/use-create-favorite";
 import { Favorite } from "@/types";
 import { useDeleteFavorite } from "@/features/notes/api/use-delete-favorite";
+import useConfirm from "@/hooks/use-confirm";
 
 type CardActionsProps = {
   isOwner: boolean;
@@ -30,6 +31,10 @@ export default function CardActions({
   const deleteFavoriteMutation = useDeleteFavorite(favorite?.id!);
   const restoreMutation = useRestoreNote(id!);
   const createFavoriteMutation = useCreateFavorite();
+  const [DeleteConfirmDialog, deleteConfirm] = useConfirm({
+    title: "Are you sure?",
+    message: "This action will delete your code snippet permanently",
+  });
 
   const onSoftDelete = () => {
     softDeleteMutation.mutate(id!);
@@ -55,84 +60,95 @@ export default function CardActions({
     createFavoriteMutation.isPending;
 
   return (
-    <div className="flex items-center gap-x-2">
-      {isPreDeleted ? (
-        <div
-          className={cn("items-center gap-x-2", isOwner ? "flex" : "hidden")}
-        >
-          <ActionTooltip title="Restore">
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              onClick={onRestore}
-              disabled={pending}
-            >
-              <ArchiveRestore className="size-4" />
-            </Button>
-          </ActionTooltip>
-          <ActionTooltip title="Permanent Delete">
-            <Button
-              variant={"destructive"}
-              size={"sm"}
-              onClick={onDelete}
-              disabled={pending}
-            >
-              <Trash2 className="size-4" />
-            </Button>
-          </ActionTooltip>
-        </div>
-      ) : (
-        <>
-          {favorite ? (
-            <ActionTooltip title="Remove from favorite">
-              <Button
-                variant={"ghost"}
-                size={"sm"}
-                disabled={pending}
-                onClick={onDeleteFavorite}
-              >
-                <HeartOff className="size-4" />
-              </Button>
-            </ActionTooltip>
-          ) : (
-            <ActionTooltip title="Favorite">
-              <Button
-                variant={"ghost"}
-                size={"sm"}
-                disabled={pending}
-                onClick={onCreateFavorite}
-              >
-                <Heart className="size-4" />
-              </Button>
-            </ActionTooltip>
-          )}
-
+    <>
+      <DeleteConfirmDialog />
+      <div className="flex items-center gap-x-2">
+        {isPreDeleted ? (
           <div
             className={cn("items-center gap-x-2", isOwner ? "flex" : "hidden")}
           >
-            <ActionTooltip title="Edit">
+            <ActionTooltip title="Restore">
               <Button
                 variant={"ghost"}
                 size={"sm"}
-                onClick={() => onOpen(id)}
+                onClick={onRestore}
                 disabled={pending}
               >
-                <Pen className="size-4" />
+                <ArchiveRestore className="size-4" />
               </Button>
             </ActionTooltip>
-            <ActionTooltip title="Delete">
+            <ActionTooltip title="Permanent Delete">
               <Button
                 variant={"destructive"}
                 size={"sm"}
-                onClick={onSoftDelete}
+                onClick={async () => {
+                  const isOk = await deleteConfirm();
+                  if (isOk) {
+                    onDelete();
+                  }
+                }}
                 disabled={pending}
               >
                 <Trash2 className="size-4" />
               </Button>
             </ActionTooltip>
           </div>
-        </>
-      )}
-    </div>
+        ) : (
+          <>
+            {favorite ? (
+              <ActionTooltip title="Remove from favorite">
+                <Button
+                  variant={"ghost"}
+                  size={"sm"}
+                  disabled={pending}
+                  onClick={onDeleteFavorite}
+                >
+                  <HeartOff className="size-4" />
+                </Button>
+              </ActionTooltip>
+            ) : (
+              <ActionTooltip title="Favorite">
+                <Button
+                  variant={"ghost"}
+                  size={"sm"}
+                  disabled={pending}
+                  onClick={onCreateFavorite}
+                >
+                  <Heart className="size-4" />
+                </Button>
+              </ActionTooltip>
+            )}
+
+            <div
+              className={cn(
+                "items-center gap-x-2",
+                isOwner ? "flex" : "hidden"
+              )}
+            >
+              <ActionTooltip title="Edit">
+                <Button
+                  variant={"ghost"}
+                  size={"sm"}
+                  onClick={() => onOpen(id)}
+                  disabled={pending}
+                >
+                  <Pen className="size-4" />
+                </Button>
+              </ActionTooltip>
+              <ActionTooltip title="Delete">
+                <Button
+                  variant={"destructive"}
+                  size={"sm"}
+                  onClick={onSoftDelete}
+                  disabled={pending}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </ActionTooltip>
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 }
