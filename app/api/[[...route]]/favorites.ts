@@ -22,17 +22,12 @@ const app = new Hono()
             .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
             .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
             .leftJoin(favorites, eq(topicsToNotes.noteId, favorites.noteId))
-            .where(
-                and(
-                    eq(topicsToNotes.userId, auth.userId),
-                )
-            )
             .orderBy(desc(notes.createdAt));
 
         const uniqueNotesMap: { [key: string]: Note } = {};
         // Iterate through each item in the array
         data.forEach(item => {
-            if (!item || !item?.notes || !item?.topics || !item?.topics_to_notes || item.favorites === null || !item.favorites || item.notes.isPreDeleted) {
+            if (!item || !item?.notes || !item?.topics || !item?.topics_to_notes || item.favorites === null || !item.favorites || item.notes.isPreDeleted || item.favorites.userId !== auth.userId) {
                 return;
             }
 

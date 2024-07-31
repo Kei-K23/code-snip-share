@@ -23,6 +23,7 @@ export const useEditNote = (id: string) => {
     onSuccess: () => {
       toast.success("Code snippet updated successfully");
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      queryClient.invalidateQueries({ queryKey: ["notes", "all"] });
       queryClient.invalidateQueries({ queryKey: ["notes", { id }] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({ queryKey: ["notes", "soft-delete"] });

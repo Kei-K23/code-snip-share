@@ -99,7 +99,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="sticky top-0 flex h-14 items-center gap-2 border-b bg-muted/90 px-4 lg:h-[60px] lg:px-6 z-[100]">
+        <header className="sticky top-0 flex h-14 items-center gap-2 border-b bg-muted/90 px-4 lg:h-[60px] lg:px-6 z-10">
           <Sheet>
             <SheetTrigger asChild>
               <Button

@@ -9,13 +9,14 @@ import { useNewNote } from "@/features/notes/hooks/use-new-note";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { dark } from "@clerk/themes";
 
 export default function PublicHeader() {
   const { onOpen } = useNewNote();
   const { resolvedTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 flex h-14 items-center gap-2 border-b bg-muted/90 px-4 lg:h-[60px] lg:px-6 z-[100]">
+    <header className="sticky top-0 flex h-14 items-center gap-2 border-b bg-muted/90 px-4 lg:h-[60px] lg:px-6 z-10">
       <Link
         href={"/dashboard"}
         className={cn(

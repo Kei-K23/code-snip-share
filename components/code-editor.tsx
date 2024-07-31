@@ -37,6 +37,7 @@ export default function CodeEditor({
       style={{
         width: "100%",
         height: "450px",
+        zIndex: 0,
       }}
       placeholder="Share your code"
       mode={language ?? ""}

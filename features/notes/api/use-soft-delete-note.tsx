@@ -16,6 +16,7 @@ export const useSoftDeleteNote = (id: string) => {
     onSuccess: () => {
       toast.success("Code snippet delete successfully");
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      queryClient.invalidateQueries({ queryKey: ["notes", "all"] });
       queryClient.invalidateQueries({ queryKey: ["notes", { id }] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
       queryClient.invalidateQueries({
