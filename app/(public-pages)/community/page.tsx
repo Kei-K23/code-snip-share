@@ -2,6 +2,7 @@
 import CodeSnippetCard, {
   CodeSnippetCardSkeleton,
 } from "@/components/code-snippet-card";
+import { PlaceholdersAndVanishInput } from "@/components/placeholders-and-vanish-input";
 import { Button } from "@/components/ui/button";
 import { useGetAllNotes } from "@/features/notes/api/use-get-all-notes";
 import { useNewNote } from "@/features/notes/hooks/use-new-note";
@@ -10,6 +11,8 @@ import React from "react";
 export default function CommunityPage() {
   const { data: noteQuery, isLoading } = useGetAllNotes();
   const { onOpen } = useNewNote();
+
+  const placeholders = ["JavaScript", "React", "TypeScript"];
 
   const loading = isLoading;
   if (loading) {
@@ -32,22 +35,32 @@ export default function CommunityPage() {
       );
     } else {
       return (
-        <div className="px-6 mt-10 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          {noteQuery?.map((note) => (
-            <CodeSnippetCard
-              key={note.id}
-              id={note.id}
-              title={note.title}
-              code={note.code}
-              language={note.language}
-              description={note.description}
-              createdAt={note.createdAt}
-              topics={note.topics}
-              userId={note.userId}
-              isPreDeleted={note.isPreDeleted}
-              favorite={note.favorite}
+        <div>
+          <div className="mt-10">
+            <PlaceholdersAndVanishInput
+              placeholders={placeholders}
+              onChange={() => {}}
+              onSubmit={() => {}}
             />
-          ))}
+          </div>
+
+          <div className="px-6 mt-10 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+            {noteQuery?.map((note) => (
+              <CodeSnippetCard
+                key={note.id}
+                id={note.id}
+                title={note.title}
+                code={note.code}
+                language={note.language}
+                description={note.description}
+                createdAt={note.createdAt}
+                topics={note.topics}
+                userId={note.userId}
+                isPreDeleted={note.isPreDeleted}
+                favorite={note.favorite}
+              />
+            ))}
+          </div>
         </div>
       );
     }

@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import {
-  Bell,
   CodeSquareIcon,
   Globe2,
   Loader2,
