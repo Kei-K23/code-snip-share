@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth"
 import { zValidator } from "@hono/zod-validator"
-import { favorites, insertFavoritesSchema, notes, topics, topicsToNotes } from "@/db/schema";
+import { favorites, insertFavoritesSchema, notes, topics, topicsToNotes, users } from "@/db/schema";
 import { db } from "@/db/drizzle";
 import { createId } from "@paralleldrive/cuid2";
 import { and, desc, eq } from "drizzle-orm";
@@ -22,6 +22,7 @@ const app = new Hono()
             .leftJoin(notes, eq(topicsToNotes.noteId, notes.id))
             .leftJoin(topics, eq(topicsToNotes.topicId, topics.id))
             .leftJoin(favorites, eq(topicsToNotes.noteId, favorites.noteId))
+            .leftJoin(users, eq(topicsToNotes.userId, users.id))
             .orderBy(desc(notes.createdAt));
 
         const uniqueNotesMap: { [key: string]: Note } = {};
@@ -42,7 +43,8 @@ const app = new Hono()
                 uniqueNotesMap[noteId] = {
                     ...item.notes,
                     topics: [topic],
-                    favorite: item.favorites
+                    favorite: item.favorites,
+                    user: item.users!
                 };
             } else {
                 // If the noteId is already in the map, just add the topic to the topics array
