@@ -15,6 +15,8 @@ const LANGUAGES = [
     "elixir",
     "typescript",
     "css",
+    "jsx",
+    'tsx'
 ];
 
 const THEMES = [

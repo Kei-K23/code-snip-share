@@ -44,7 +44,7 @@ export default function CommunityPage() {
             />
           </div>
 
-          <div className="px-6 mt-10 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="px-6 pb-10 mt-10 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
             {noteQuery?.map((note) => (
               <CodeSnippetCard
                 key={note.id}

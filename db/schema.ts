@@ -8,12 +8,19 @@ export const topics = pgTable("topics", {
     name: text("name").notNull(),
 });
 
+export const users = pgTable("users", {
+    id: text('id').primaryKey(),
+    username: text("username").notNull(),
+    imageUrl: text("image_url"),
+    email: text("email").notNull()
+});
+
 export const notes = pgTable("notes", {
     id: text('id').primaryKey(),
     title: text("title").notNull(),
     description: text("description").notNull(),
     code: text("code").notNull(),
-    userId: text('userId').notNull(),
+    userId: text('userId').notNull().references(() => users.id),
     language: text('language').notNull(),
     isPreDeleted: boolean("is_pre_deleted").default(false),
     createdAt: timestamp('created_at').defaultNow(),
@@ -24,13 +31,13 @@ export const topicsToNotes = pgTable('topics_to_notes', {
     id: text('id').primaryKey(),
     topicId: text('topic_id').notNull().references(() => topics.id),
     noteId: text('note_id').notNull().references(() => notes.id),
-    userId: text('userId').notNull(),
+    userId: text('userId').notNull().references(() => users.id),
 });
 
 export const favorites = pgTable('favorites', {
     id: text('id').primaryKey(),
     noteId: text('note_id').notNull().references(() => notes.id),
-    userId: text('userId').notNull(),
+    userId: text('userId').notNull().references(() => users.id),
 });
 // export const accountsRelations = relations(accounts, ({ many }) => ({
 //     transactions: many(transactions)
@@ -84,6 +91,7 @@ export const insertNotesWithTopicsSchema = z.object({
     ),
 });
 export const insertNotesSchema = createInsertSchema(notes);
+export const insertUsersSchema = createInsertSchema(users);
 export const insertFavoritesSchema = createInsertSchema(favorites);
 export const insertTopicsToNotesSchema = createInsertSchema(topicsToNotes);
 // export const insertCategorySchema = createInsertSchema(categories);

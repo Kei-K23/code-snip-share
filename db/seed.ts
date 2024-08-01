@@ -136,7 +136,15 @@ const TOPICS = [
     "Scalability",
     "Debugging",
     "Refactoring",
-    "Clean Code"
+    "Clean Code",
+    "Nextjs",
+    "Git",
+    "GitHub",
+    "UI",
+    "Component",
+    "Framework",
+    "Library",
+    "Package",
 ]
 
 const main = async () => {
