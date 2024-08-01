@@ -14,8 +14,6 @@ frameworks.
 - Reactivity
 - Soft-deletion and restore functionalities
 - Community section
-- User following and follower system
-- Commenting system
 - E2E type-safe between client and server
 
 ## Tech Stacks
