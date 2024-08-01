@@ -41,6 +41,7 @@ export default function TrashPage() {
               userId={note.userId}
               isPreDeleted={note.isPreDeleted}
               favorite={note.favorite}
+              user={note.user}
             />
           ))}
         </div>

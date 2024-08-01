@@ -45,6 +45,7 @@ export default function DashboardPage() {
               userId={note.userId}
               isPreDeleted={note.isPreDeleted}
               favorite={note.favorite}
+              user={note.user}
             />
           ))}
         </div>

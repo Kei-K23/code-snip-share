@@ -16,7 +16,8 @@ import { format } from "date-fns";
 import CardActions from "./card-actions";
 import { useAuth } from "@clerk/nextjs";
 import { Skeleton } from "./ui/skeleton";
-import { Favorite } from "@/types";
+import { Favorite, User } from "@/types";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 type CodeSnippetCardProps = {
   id: string;
@@ -29,6 +30,7 @@ type CodeSnippetCardProps = {
   userId: string;
   isPreDeleted?: boolean | null;
   favorite?: Favorite | null;
+  user?: User | null;
 };
 
 export default function CodeSnippetCard({
@@ -42,6 +44,7 @@ export default function CodeSnippetCard({
   userId,
   isPreDeleted,
   favorite,
+  user,
 }: CodeSnippetCardProps) {
   const { resolvedTheme } = useTheme();
   const { userId: authUserId } = useAuth();
@@ -50,7 +53,13 @@ export default function CodeSnippetCard({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{title}</CardTitle>
+          <div className="flex items-center gap-3 mb-5">
+            <Avatar>
+              <AvatarImage src={user?.imageUrl!} alt={user?.username} />
+              <AvatarFallback>{user?.username}</AvatarFallback>
+            </Avatar>
+            <h3>{user?.username}</h3>
+          </div>
           <CardActions
             isOwner={authUserId === userId}
             id={id}
@@ -58,6 +67,7 @@ export default function CodeSnippetCard({
             favorite={favorite}
           />
         </div>
+        <CardTitle className="text-lg">{title}</CardTitle>
         <div className="flex flex-wrap gap-2 items-center">
           {topics?.map((topic) => (
             <Badge key={topic.id}>{topic.name}</Badge>
