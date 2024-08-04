@@ -1,11 +1,15 @@
+"use client";
+
 import { ContainerScroll } from "@/components/container-scroll-animation";
 import { HoverBorderGradient } from "@/components/hover-border-gradient";
-import { CodeSquareIcon } from "lucide-react";
+import { CodeSquareIcon, LogIn, UserPlus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { useAuth } from "@clerk/nextjs";
 
 export default function LandingPage() {
+  const { isSignedIn } = useAuth();
   return (
     <div className="flex flex-col overflow-hidden">
       <ContainerScroll
@@ -44,18 +48,43 @@ export default function LandingPage() {
           offers a rich repository of code snippets across various languages and
           frameworks.
         </p>
-        <div className="mt-7 flex justify-center text-center">
-          <Link href={"/dashboard"}>
-            <HoverBorderGradient
-              containerClassName="rounded-full"
-              as="button"
-              className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
-            >
-              <CodeSquareIcon className="size-6" />
-              <span>Get CodeSnipShare</span>
-            </HoverBorderGradient>
-          </Link>
-        </div>
+        {isSignedIn ? (
+          <div className="mt-7 flex justify-center text-center">
+            <Link href={"/dashboard"}>
+              <HoverBorderGradient
+                containerClassName="rounded-full"
+                as="button"
+                className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
+              >
+                <CodeSquareIcon className="size-6" />
+                <span>Get CodeSnipShare</span>
+              </HoverBorderGradient>
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-7 flex justify-center text-center gap-4">
+            <Link href={"/sign-up"}>
+              <HoverBorderGradient
+                containerClassName="rounded-full"
+                as="button"
+                className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
+              >
+                <UserPlus className="size-6" />
+                <span>Register</span>
+              </HoverBorderGradient>
+            </Link>
+            <Link href={"/sign-in"}>
+              <HoverBorderGradient
+                containerClassName="rounded-full"
+                as="button"
+                className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
+              >
+                <LogIn className="size-6" />
+                <span>Login</span>
+              </HoverBorderGradient>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
