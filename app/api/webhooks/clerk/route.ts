@@ -59,18 +59,18 @@ export async function POST(req: Request) {
     if (eventType === "user.created") {
         await db.insert(users).values({
             id: payload.data.id,
-            username: userFullName,
+            username: userFullName ? userFullName : payload.data.email_addresses[0]?.email_address.split('@')[0],
             imageUrl: payload.data.image_url,
-            email: payload.data.email_addresses[0].email_address
+            email: payload.data.email_addresses[0]?.email_address
         });
     }
 
     // update user
     if (eventType === "user.updated") {
         await db.update(users).set({
-            username: userFullName,
+            username: userFullName ? userFullName : payload.data.email_addresses[0]?.email_address.split('@')[0],
             imageUrl: payload.data.image_url,
-            email: payload.data.email_addresses[0].email_address
+            email: payload.data.email_addresses[0]?.email_address
         });
     }
 
